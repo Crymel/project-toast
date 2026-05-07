@@ -8,6 +8,10 @@ function useEscKey(callback) {
 			}
 		};
 		window.addEventListener("keydown", keyPressEvent);
+
+		return () => {
+			window.removeEventListener("keydown", keyPressEvent);
+		};
 	}, [callback]);
 }
 
