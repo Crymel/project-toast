@@ -1,14 +1,24 @@
 import React from "react";
-
 import Button from "../Button";
-
 import styles from "./ToastPlayground.module.css";
+import ToastShelf from "../ToastShelf";
+import { ToastContext } from "../ToastProvider/ToastProvider";
 
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
+const DEFAULT_VARIANT = "notice";
 
 function ToastPlayground() {
-	const [message, setMessage] = React.useState("");
-	const [variant, setVariant] = React.useState("notice");
+	const [draftMessage, setDraftMessage] = React.useState("");
+	const [draftVariant, setDraftVariant] = React.useState(DEFAULT_VARIANT);
+	const addToast = React.useContext(ToastContext).addToast;
+
+	const submitToast = (event) => {
+		event.preventDefault();
+		addToast(draftMessage, draftVariant);
+
+		setDraftMessage("");
+		setDraftVariant(DEFAULT_VARIANT);
+	};
 
 	return (
 		<div className={styles.wrapper}>
@@ -16,8 +26,8 @@ function ToastPlayground() {
 				<img alt="Cute toast mascot" src="/toast.png" />
 				<h1>Toast Playground</h1>
 			</header>
-
-			<div className={styles.controlsWrapper}>
+			<ToastShelf />
+			<form className={styles.controlsWrapper} onSubmit={submitToast}>
 				<div className={styles.row}>
 					<label
 						htmlFor="message"
@@ -26,12 +36,12 @@ function ToastPlayground() {
 						Message
 					</label>
 					<div className={styles.inputWrapper}>
-						<textarea
+						<input
 							id="message"
 							className={styles.messageInput}
-							value={message}
+							value={draftMessage}
 							onChange={(event) => {
-								setMessage(event.target.value);
+								setDraftMessage(event.target.value);
 							}}
 						/>
 					</div>
@@ -47,9 +57,9 @@ function ToastPlayground() {
 									type="radio"
 									name="variant"
 									value={option}
-									checked={variant === option}
+									checked={draftVariant === option}
 									onChange={(event) => {
-										setVariant(event.target.value);
+										setDraftVariant(event.target.value);
 									}}
 								/>
 								{option}
@@ -64,7 +74,7 @@ function ToastPlayground() {
 						<Button>Pop Toast!</Button>
 					</div>
 				</div>
-			</div>
+			</form>
 		</div>
 	);
 }
